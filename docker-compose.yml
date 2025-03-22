@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  stomp-server:
+    build:
+      context: ./server
+    container_name: stomp-server
+    ports:
+      - "7777:7777"
+    networks:
+      - stomp-network
+
+  stomp-client:
+    build:
+      context: ./client
+    container_name: stomp-client
+    depends_on:
+      - stomp-server
+    networks:
+      - stomp-network
+    stdin_open: true  # Keep STDIN open
+    tty: true         # Allocate a pseudo-TTY
+
+networks:
+  stomp-network:
+    driver: bridge
