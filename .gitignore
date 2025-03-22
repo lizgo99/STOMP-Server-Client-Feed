@@ -1,0 +1,3 @@
+server/target/
+client/bin/*
+*.DS_Store
