@@ -1,26 +1,27 @@
 # STOMP Server-Client Feed System
 
 ## Project Overview
-This project implements a STOMP (Simple Text Oriented Messaging Protocol) messaging system consisting of a server and client. The system allows clients to connect to the server, subscribe to topics, publish messages, and receive updates in real-time.
+This project implements a STOMP (Simple Text Oriented Messaging Protocol) messaging system consisting of a server and client. The system allows clients to connect to the server, subscribe to topics, publish messages, and receive updates in real-time. The main focus is on implementing a reliable communication system for a sports event feed where users can report, subscribe to, and receive game updates across different channels.
 
 ## Architecture
 
 ### Server
 - Implemented in Java using Maven
 - Multithreaded TCP server that handles STOMP protocol messages
+- Supports both thread-per-client and reactor (non-blocking I/O) operation modes
 - Manages user connections, subscriptions, and message routing
-- Uses a reactor pattern for non-blocking I/O
+- Implements connection persistence and message delivery guarantees
+- Handles user authentication and channel management
 
 ### Client
 - Implemented in C++ with Boost libraries
 - Command-line interface for user interaction
 - Handles asynchronous communication with the server
 - Uses Boost.Asio for network communication
-
-## Technical Stack
-- **Server**: Java 11, Maven
-- **Client**: C++, Boost (System, Thread, Regex, Filesystem)
-- **Protocol**: STOMP 1.2
+- Processes STOMP frames for protocol compliance
+- Supports concurrent message sending and receiving
+- Implements a robust event reporting system for game updates
+- Maintains subscription state across reconnections
 
 ### Prerequisites
 
@@ -31,7 +32,42 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
 - C++ compiler with C++11 support
 - Boost library (1.66.0 or higher recommended)
 
-### Building and Running the Project
+## Building and Running the Project
+
+### Running with Docker (Recommended)
+
+#### Prerequisites
+- Docker and Docker Compose installed on your system
+
+#### Quick Start
+1. **Build and start all containers**:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **Run the client application**:
+   ```bash
+   docker-compose run --rm stomp-client ./bin/StompWCIClient
+   ```
+   * The client will also start the server automatically.
+
+3. **Connect to the server**:
+   Once in the client application, connect using:
+   ```
+   login stomp-server:7777 <username> <password>
+   ```
+   * If connection issues occur, you can find the server's internal IP address with:
+        ```bash
+        docker network inspect stomp-server-client-feed_stomp-network
+        ```
+        Then use that IP address (e.g., `172.18.0.2:7777`) to connect
+
+4. **Stop the containers**:
+   ```bash
+   docker-compose down
+   ```
+
+### Running Manually
 
 #### Server
 
@@ -65,7 +101,7 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
    ./bin/StompWCIClient
    ```
 
-## Client Usage
+### Client Usage
 
 After starting the client, you can use the following commands:
 
@@ -105,3 +141,9 @@ After starting the client, you can use the following commands:
    ```
    logout
    ```
+
+## Technical Stack
+- **Server**: Java 11+, Maven
+- **Client**: C++, Boost (System, Thread, Regex, Filesystem)
+- **Containerization**: Docker, Docker Compose
+- **Protocol**: STOMP 1.2
