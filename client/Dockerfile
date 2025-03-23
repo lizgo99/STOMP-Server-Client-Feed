@@ -1,8 +1,11 @@
 FROM gcc:11
 
-# Install required dependencies
+# Install only the required Boost components
 RUN apt-get update && apt-get install -y \
-    libboost-all-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libboost-regex-dev \
+    libboost-filesystem-dev \
     make \
     && rm -rf /var/lib/apt/lists/*
 
@@ -17,3 +20,6 @@ RUN make clean && make
 
 # Set the entry point
 ENTRYPOINT ["./bin/StompWCIClient"]
+
+# Use bash as the default command
+# CMD ["/bin/bash"]
