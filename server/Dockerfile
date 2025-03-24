@@ -12,5 +12,9 @@ COPY src ./src
 # Build the application
 RUN mvn clean package
 
+# Set default values for port and server type
+ENV PORT=7777
+ENV SERVER_TYPE=reactor
+
 # Command to run the server
-ENTRYPOINT ["mvn", "exec:java", "-Dexec.mainClass=bgu.spl.net.impl.stomp.StompServer", "-Dexec.args=7777 tpc"]
+ENTRYPOINT ["sh", "-c", "mvn exec:java -Dexec.mainClass=bgu.spl.net.impl.stomp.StompServer -Dexec.args=\"$PORT $SERVER_TYPE\""]

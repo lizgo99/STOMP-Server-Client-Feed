@@ -43,15 +43,22 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
 1. **Build and start all containers**:
    ```bash
    docker-compose up --build -d
+   docker-compose run -it --rm stomp-client
    ```
+   * the default port is `7777` and the default server type is `reactor`.  
+   To run the server with a different port or server type `tpc` you can run: 
+      ```bash
+      PORT=<port> SERVER_TYPE=tpc docker-compose up --build -d
+      ```
+   * Before running, make sure that the docker daemon is running
 
-2. **Run the client application**:
+2. **Run the client application**:  
+   Inside the client container terminal, run:
    ```bash
-   docker-compose run --rm stomp-client ./bin/StompWCIClient
+   ./bin/StompWCIClient
    ```
-   * The client will also start the server automatically.
 
-3. **Connect to the server**:
+3. **Connect to the server**:  
    Once in the client application, connect using:
    ```
    login stomp-server:7777 <username> <password>
@@ -60,12 +67,29 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
         ```bash
         docker network inspect stomp-server-client-feed_stomp-network
         ```
-        Then use that IP address (e.g., `172.18.0.2:7777`) to connect
+        Then use that IP address (e.g., `172.18.0.2`) to connect
 
-4. **Stop the containers**:
-   ```bash
-   docker-compose down
-   ```
+4. **Stop the program**:  
+   * To exit the clients app press `Ctrl + C` (^C)  
+   * To stop only the client container,  
+   inside the client container terminal run:
+      ```bash
+      exit
+      ```
+      or in the host terminal run:
+      ```bash
+      docker-compose stop stomp-client
+      docker-compose rm -f stomp-client
+      ```
+   * To stop only the server, in the host terminal run:
+      ```bash
+      docker-compose stop stomp-server
+      docker-compose rm -f stomp-server
+      ```
+   * To stop all containers, in the host terminal run:
+      ```bash
+      docker-compose down
+      ```
 
 ### Running Manually
 
@@ -87,6 +111,8 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
      ```bash
      mvn exec:java -Dexec.mainClass="bgu.spl.net.impl.stomp.StompServer" -Dexec.args="7777 reactor"
      ```
+3. **Stop the server**:  
+   To stop the server press `Ctrl + C` (^C)
 
 #### Client
 
@@ -100,6 +126,8 @@ This project implements a STOMP (Simple Text Oriented Messaging Protocol) messag
    ```bash
    ./bin/StompWCIClient
    ```
+3. **Stop the client**:  
+   To exit the clients app press `Ctrl + C` (^C)
 
 ### Client Usage
 
@@ -144,6 +172,6 @@ After starting the client, you can use the following commands:
 
 ## Technical Stack
 - **Server**: Java 11+, Maven
-- **Client**: C++, Boost (System, Thread, Regex, Filesystem)
+- **Client**: C++, Boost
 - **Containerization**: Docker, Docker Compose
 - **Protocol**: STOMP 1.2

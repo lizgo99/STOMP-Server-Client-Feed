@@ -17,9 +17,3 @@ COPY . .
 
 # Build the client
 RUN make clean && make
-
-# Set the entry point
-ENTRYPOINT ["./bin/StompWCIClient"]
-
-# Use bash as the default command
-# CMD ["/bin/bash"]
