@@ -20,20 +20,45 @@ ConnectionHandler::~ConnectionHandler() {
 }
 
 
+// bool ConnectionHandler::connect() {
+// 	try {
+// 		tcp::endpoint endpoint(boost::asio::ip::make_address(host_), port_); // the server endpoint
+// 		boost::system::error_code error;
+// 		socket_.connect(endpoint, error);
+// 		if (error)
+// 			throw boost::system::system_error(error);
+// 	}
+// 	catch (std::exception &e) {
+// 		std::cerr << "Connection failed (Error: " << e.what() << ')' << std::endl;
+// 		return false;
+// 	}
+// 	connected = true;
+// 	return true;
+// }
+
 bool ConnectionHandler::connect() {
 	try {
-		tcp::endpoint endpoint(boost::asio::ip::make_address(host_), port_); // the server endpoint
-		boost::system::error_code error;
-		socket_.connect(endpoint, error);
-		if (error)
-			throw boost::system::system_error(error);
-	}
-	catch (std::exception &e) {
-		std::cerr << "Connection failed (Error: " << e.what() << ')' << std::endl;
-		return false;
-	}
-	connected = true;
-	return true;
+		
+        boost::asio::ip::tcp::resolver resolver(io_service_);
+
+        boost::system::error_code error;
+        auto endpoints = resolver.resolve(host_, std::to_string(port_), error);
+        if (error) {
+            throw boost::system::system_error(error);
+        }
+
+        boost::asio::connect(socket_, endpoints, error);
+        if (error) {
+            throw boost::system::system_error(error);
+        }
+    }
+    catch (std::exception &e) {
+        std::cerr << "Connection failed (Error: " << e.what() << ')' << std::endl;
+        return false;
+    }
+
+    connected = true;
+    return true;
 }
 
 bool ConnectionHandler::isConnected(){
